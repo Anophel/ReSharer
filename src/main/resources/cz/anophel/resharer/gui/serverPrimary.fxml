@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox fx:id="rootVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="874.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.anophel.resharer.gui.ServerPrimaryController">
+   <children>
+      <HBox alignment="BOTTOM_LEFT" prefHeight="63.0" prefWidth="874.0">
+         <children>
+            <Label fx:id="currPathLabel" lineSpacing="20.0" text="Label" />
+         </children>
+      </HBox>
+      <TableView fx:id="filesList" prefHeight="485.0" prefWidth="874.0">
+        <columns>
+          <TableColumn fx:id="nameColumn" prefWidth="297.0" text="Name" />
+          <TableColumn fx:id="lastModifColumn" prefWidth="313.0" text="Last modification" />
+            <TableColumn fx:id="uidColumn" prefWidth="263.0" text="UID" />
+        </columns>
+      </TableView>
+      <HBox alignment="CENTER" prefHeight="103.0" prefWidth="744.0" spacing="20.0">
+         <children>
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#goBack" text="Back" />
+            <Button fx:id="addFileButton" mnemonicParsing="false" onAction="#addFile" text="Add files" />
+            <Button fx:id="addDirButton" mnemonicParsing="false" onAction="#addDir" text="Add directories" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
