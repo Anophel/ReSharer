@@ -3,7 +3,7 @@
 ## Description
 ReSharer is a simple tool for resource sharing between your computers. The server-side application provides access to a virtual filesystem and provides an interface for custom running a custom job. The client-side application provides a viewer of server filesystem, possibility to download any shared file and start a custom job. The custom job's class files have to be available somewhere on a ReSharer server (codebase server) for the ReSharer server, which runs the job (worker server). 
 
-{:toc}
+* TOC {:toc}
 
 ## Table of contents
 - <a href="#installation">Installation</a>
