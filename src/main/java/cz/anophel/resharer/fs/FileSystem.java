@@ -77,7 +77,7 @@ public class FileSystem implements Serializable {
 	 * @return
 	 */
 	public String getJobResultsPath() {
-		return System.getProperty("user.home") + File.separator + "ReshererJobResults";
+		return System.getProperty("user.home") + File.separator + "ResharerJobResults";
 	}
 	
 	/**

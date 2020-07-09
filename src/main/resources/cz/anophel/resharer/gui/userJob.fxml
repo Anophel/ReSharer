@@ -25,7 +25,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="URL code base server:" />
+            <Label text="URL codebase server:" />
             <TextField fx:id="urlField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="304.0" GridPane.columnIndex="1" />
             <Label text="Remote classpath:" GridPane.rowIndex="1" />
             <TextField fx:id="cpField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="304.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
