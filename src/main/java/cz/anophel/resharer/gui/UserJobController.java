@@ -5,6 +5,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Controller for modal window, where user specifies
+ * information about a custom job.
+ * 
+ * @author Patrik Vesely
+ *
+ */
 public class UserJobController {
 
 	@FXML
@@ -22,16 +29,34 @@ public class UserJobController {
 	@FXML
 	private TextField outputField;
 
+	/**
+	 * URL of remote worker server.
+	 */
 	private String url;
 
+	/**
+	 * ClassPath of the job.
+	 */
 	private String cp;
 
+	/**
+	 * Main class of the job.
+	 */
 	private String mainClass;
 
+	/**
+	 * Name of the output file.
+	 */
 	private String output;
 
+	/**
+	 * Indicator, whether user clicked on Start.
+	 */
 	private boolean success = false;
 
+	/**
+	 * Sets all the values needed to start the job.
+	 */
 	@FXML
 	private void startJob() {
 		url = urlField.getText();

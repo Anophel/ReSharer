@@ -13,6 +13,9 @@ public class FileDescriptor extends AbstractDescriptor implements Serializable {
 
 	private static final long serialVersionUID = 8216395642710361013L;
 	
+	/**
+	 * Path on disk to the real file.
+	 */
 	private String path;
 
 	public FileDescriptor(String path, long uid, String name) {

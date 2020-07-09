@@ -19,6 +19,14 @@ import cz.anophel.resharer.rmi.runner.IResharerRunnable;
 import cz.anophel.resharer.rmi.runner.ResharerClassLoader;
 import cz.anophel.resharer.utils.Ref;
 
+/**
+ * Server implementation of IResourceProvider.
+ * 
+ * Serves for basic handling of requests to file system or job running.
+ * 
+ * @author Patrik Vesely
+ *
+ */
 public class ResourceProviderImpl implements IResourceProvider {
 
 	private Ref<FileSystem> fs;

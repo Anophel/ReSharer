@@ -17,9 +17,19 @@ public class DirectoryDescriptor extends AbstractDescriptor implements Serializa
 
 	private static final long serialVersionUID = -7156621207795143187L;
 	
+	/**
+	 * List of files in this directory.
+	 */
 	private List<FileDescriptor> files;
+	
+	/**
+	 * List of directories in this directory.
+	 */
 	private List<DirectoryDescriptor> dirs;
 
+	/**
+	 * MultiListView in this directory.
+	 */
 	private List<IDescriptor> allDescs;
 
 	public DirectoryDescriptor(long uid, String name) {

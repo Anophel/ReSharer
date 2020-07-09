@@ -8,9 +8,21 @@ import java.io.ObjectOutputStream;
 
 import cz.anophel.resharer.utils.ResharerException;
 
+/**
+ * This class stores/loads a virtual file system.
+ * 
+ * @author Patrik Vesely
+ *
+ */
 public final class FileSystemLoader {
 
-	
+	/**
+	 * Loads a virtual file system from a file on the disk.
+	 * 
+	 * @param f
+	 * @return
+	 * @throws ResharerException
+	 */
 	public static FileSystem load(File f) throws ResharerException {
 		try (var in = new ObjectInputStream(new FileInputStream(f))) {
 			return (FileSystem) in.readObject();
@@ -19,6 +31,13 @@ public final class FileSystemLoader {
 		}
 	}
 	
+	/**
+	 * Saves the virtual file system to a file on the disk.
+	 * 
+	 * @param fs
+	 * @param f
+	 * @throws ResharerException
+	 */
 	public static void save(FileSystem fs, File f) throws ResharerException {
 		try (var out = new ObjectOutputStream(new FileOutputStream(f))) {
 			out.writeObject(fs);

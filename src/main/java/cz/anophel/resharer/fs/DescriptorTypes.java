@@ -1,7 +1,7 @@
 package cz.anophel.resharer.fs;
 
 /**
- * Types of descriptors
+ * Types of descriptors.
  * 
  * @author Patrik Vesely
  *

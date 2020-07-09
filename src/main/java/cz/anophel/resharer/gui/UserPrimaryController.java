@@ -31,6 +31,9 @@ import javafx.stage.Stage;
  */
 public class UserPrimaryController extends AbstractFileController {
 
+	/**
+	 * Input field for address of remote server.
+	 */
 	@FXML
 	private TextField ipTextField;
 

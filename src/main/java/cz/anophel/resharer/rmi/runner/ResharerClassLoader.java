@@ -6,6 +6,15 @@ import java.rmi.RemoteException;
 import cz.anophel.resharer.rmi.DirectoryDescriptorView;
 import cz.anophel.resharer.rmi.IResourceProvider;
 
+/**
+ * Custom class loader for ReSherer job execution.
+ * 
+ * This classloader loads classes from the given 
+ * server.
+ * 
+ * @author Patrik Vesely
+ *
+ */
 public class ResharerClassLoader extends ClassLoader {
 
 	private IResourceProvider provider;

@@ -3,14 +3,29 @@ package cz.anophel.resharer.fs;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Abstract class for mutual functionality of all descriptors.
+ * 
+ * @author Patrik Vesely
+ *
+ */
 public abstract class AbstractDescriptor implements IDescriptor, Serializable {
 
 	private static final long serialVersionUID = 935520120L;
 
+	/**
+	 * Unique ID on the filesystem.
+	 */
 	private long uid;
 	
+	/**
+	 * Name on the filesystem.
+	 */
 	private String name;
 	
+	/**
+	 * Time of last modification on the filesystem.
+	 */
 	private LocalDateTime lastModif;
 	
 	public AbstractDescriptor(long uid, String name) {
