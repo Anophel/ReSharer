@@ -15,7 +15,7 @@ ReSharer is a simple tool for resource sharing between your computers. The serve
 - Maven 3.6 (Older may work too)
 
 #### Step 1
-Clone repository
+Clone [repository](https://github.com/Anophel/ReSharer)
 
 #### Step 2
 Run with command: `mvn clean javafx:run`
