@@ -30,6 +30,7 @@
          <children>
             <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#ls" text="Refresh" />
             <Button fx:id="connectButton" mnemonicParsing="false" onAction="#connect" text="Connect" />
+            <Button mnemonicParsing="false" onAction="#runJob" text="Start remote job" />
          </children>
       </HBox>
    </children>

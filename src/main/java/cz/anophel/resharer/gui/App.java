@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -39,7 +40,15 @@ public class App extends Application {
 		stage.sizeToScene();
 	}
 
-	private static Parent loadFXML(String fxml) throws IOException {
+	static void showModal(String fxml) throws IOException {
+		Stage dialog = new Stage();
+		dialog.initOwner(stage);
+		dialog.initModality(Modality.APPLICATION_MODAL); 
+		dialog.setScene(new Scene(loadFXML(fxml)));
+		dialog.showAndWait();
+	}
+	
+	static Parent loadFXML(String fxml) throws IOException {
 		FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
 		return fxmlLoader.load();
 	}

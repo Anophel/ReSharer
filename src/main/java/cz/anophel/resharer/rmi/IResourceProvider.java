@@ -1,6 +1,5 @@
 package cz.anophel.resharer.rmi;
 
-import java.io.File;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -69,9 +68,9 @@ public interface IResourceProvider extends Remote {
 	 * @param remoteClassPath - class path in code base server
 	 * @param url - address of code base server
 	 * @param mainClass
-	 * @param output - output file on worker server
+	 * @param output - name of output file on worker server
 	 * @throws RemoteException
 	 */
-	public void startRemoteJob(String remoteClassPath, String url, String mainClass, File output)
+	public void startRemoteJob(String remoteClassPath, String url, String mainClass, String output)
 			throws RemoteException;
 }

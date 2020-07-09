@@ -62,6 +62,16 @@
 						<id>debug</id>
 						<configuration>
 							<options>
+								<option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>
+							</options>
+							<mainClass>cz.anophel.resharer.gui.App</mainClass>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- Configuration for second debugging -->
+						<id>debug2</id>
+						<configuration>
+							<options>
 								<option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8002</option>
 							</options>
 							<mainClass>cz.anophel.resharer.gui.App</mainClass>

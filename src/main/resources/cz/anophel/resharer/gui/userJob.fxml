@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox fx:id="rootVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.anophel.resharer.gui.UserJobController">
+   <children>
+      <Label text="Job configuration">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="40.0" prefWidth="100.0" />
+          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="URL code base server:" />
+            <TextField fx:id="urlField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="304.0" GridPane.columnIndex="1" />
+            <Label text="Remote classpath:" GridPane.rowIndex="1" />
+            <TextField fx:id="cpField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="304.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Main job class" GridPane.rowIndex="2" />
+            <TextField fx:id="mainClassField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="304.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Output file" GridPane.rowIndex="3" />
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <children>
+                  <TextField fx:id="outputField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="304.0" />
+               </children>
+            </HBox>
+         </children>
+      </GridPane>
+      <HBox alignment="BOTTOM_CENTER" prefHeight="44.0" prefWidth="741.0" spacing="20.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#startJob" text="Start" />
+            <Button mnemonicParsing="false" onAction="#close" text="Cancel" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

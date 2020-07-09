@@ -41,7 +41,7 @@ public class FileSystem implements Serializable {
 	/**
 	 * UID of virtual jobResults directory
 	 */
-	private Long jobResultsUID = 1L;
+	private Long jobResultsUID = rootUID + 1;
 
 	/**
 	 * Table of all descriptors by their uid.
@@ -54,16 +54,32 @@ public class FileSystem implements Serializable {
 	private long uidQueue;
 
 	public FileSystem() {
-		uidQueue = 0;
+		uidQueue = rootUID;
 		root = new DirectoryDescriptor(getNextId(), "root");
 		descriptorTable = new HashMap<>();
 		addToTable(root);
 		
 		// Virtual directory for job results
-		addVirtualDir(root, "job_results");
-		jobResults = (DirectoryDescriptor) descriptorTable.get(jobResultsUID);
+		try {
+			File jobRes = new File(getJobResultsPath());
+			jobRes.mkdirs();
+			addDescriptor(root, jobRes, 10);
+			jobResults = (DirectoryDescriptor) descriptorTable.get(jobResultsUID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
+	/**
+	 * Returns a path to directory, where output files from jobs
+	 * are saved.
+	 * 
+	 * @return
+	 */
+	public String getJobResultsPath() {
+		return System.getProperty("user.home") + File.separator + "ReshererJobResults";
+	}
+	
 	/**
 	 * Adds descriptor to the descriptor table.
 	 * 
@@ -313,8 +329,11 @@ public class FileSystem implements Serializable {
 		if (dir == null || path == null)
 			return null;
 
-		var paths = path.split("[\\/]");
+		var paths = path.replaceFirst("^[\\/]?(root[\\/]?)?", "").split("[\\/]");
 		for (int i = 0; i < paths.length; i++) { // walking through the path
+			if (paths[i].isEmpty())
+				continue;
+			
 			if (i < (paths.length - 1)) {
 				dir = dir.getDirByName(paths[i]);
 				if (dir == null)
@@ -339,14 +358,15 @@ public class FileSystem implements Serializable {
 			return null; 
 		
 		DirectoryDescriptor dir = root;
-		var paths = path.split("[\\/]");
+		var paths = path.replaceFirst("^[\\/]?(root[\\/]?)?", "").split("[\\/]");
 		
 		for (int i = 0; i < paths.length; i++) { // walking through the path
-			if (i < (paths.length - 1)) {
-				dir = dir.getDirByName(paths[i]);
-				if (dir == null)
-					return null;
-			}
+			if (paths[i].isEmpty())
+				continue;
+			
+			dir = dir.getDirByName(paths[i]);
+			if (dir == null)
+				return null;
 		}
 		
 		return toView(dir);

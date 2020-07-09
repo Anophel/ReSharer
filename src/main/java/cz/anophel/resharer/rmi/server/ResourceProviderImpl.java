@@ -67,7 +67,7 @@ public class ResourceProviderImpl implements IResourceProvider {
 	}
 
 	@Override
-	public void startRemoteJob(String remoteClassPath, String url, String mainClass, File output)
+	public void startRemoteJob(String remoteClassPath, String url, String mainClass, String output)
 			throws RemoteException {
 		try {
 			// Connect to code base
@@ -84,13 +84,17 @@ public class ResourceProviderImpl implements IResourceProvider {
 					.loadClass(mainClass);
 
 			// Create and add output file
-			if (!fs.get().addDescriptor(fs.get().getJobResultsDir(), output, 0))
+			File outFile = new File(fs.get().getJobResultsPath() + File.separator + output);
+			outFile.createNewFile();
+			if (!fs.get().addDescriptor(fs.get().getJobResultsDir(), outFile, 0))
 				throw new Exception("Could not add output file!");
 
 			// Run job thread
 			Thread jobThread = new Thread(() -> {
 				// Prepare output stream
-				try (PrintStream ps = new PrintStream(new FileOutputStream(output))) {
+				try (PrintStream ps = new PrintStream(new FileOutputStream(outFile))) {
+					ps.append("Job Start " + System.currentTimeMillis() + "\n");
+					ps.flush();
 					try {
 						var constructor = job.getConstructor();
 						IResharerRunnable jobObj = constructor.newInstance();

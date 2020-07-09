@@ -22,7 +22,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -65,8 +64,7 @@ public class ServerPrimaryController extends AbstractFileController {
 		try {
 			ResourceProviderFactory.instance().prepareStub(fs);
 		} catch (ResharerException e2) {
-			Alert a = new Alert(AlertType.ERROR, e2.getMessage(), ButtonType.OK);
-			a.show();
+			showSimpleModal(AlertType.ERROR, e2.getMessage(), ButtonType.OK);
 			e2.printStackTrace();
 		}
 
@@ -104,8 +102,7 @@ public class ServerPrimaryController extends AbstractFileController {
 			sharing = !sharing;
 			isSharingLabel.setText(Boolean.toString(sharing));
 		} catch (ResharerException e) {
-			Alert a = new Alert(AlertType.ERROR, "Failed to start/stop sharing. " + e.getMessage(), ButtonType.OK);
-			a.show();
+			showSimpleModal(AlertType.ERROR, "Failed to start/stop sharing. " + e.getMessage(), ButtonType.OK);
 			e.printStackTrace();
 		}
 	}
@@ -121,19 +118,15 @@ public class ServerPrimaryController extends AbstractFileController {
 
 		Alert alert;
 		if (descs.size() == 1) {
-			alert = new Alert(AlertType.CONFIRMATION,
+			alert = showSimpleModal(AlertType.CONFIRMATION,
 					"File " + descs.get(0).getName() + " is going to be deleted from virtual filesystem,"
 							+ " but stays on physical filesystem. Do you want to proceed?",
 					ButtonType.YES, ButtonType.NO);
-			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-			alert.showAndWait();
 		} else {
-			alert = new Alert(AlertType.CONFIRMATION,
+			alert = showSimpleModal(AlertType.CONFIRMATION,
 					descs.size() + " files are going to be deleted from virtual filesystem,"
 							+ " but stay on physical filesystem. Do you want to proceed?",
 					ButtonType.YES, ButtonType.NO);
-			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-			alert.showAndWait();
 		}
 
 		if (alert.getResult() == ButtonType.YES) {
@@ -152,9 +145,7 @@ public class ServerPrimaryController extends AbstractFileController {
 		try {
 			Desktop.getDesktop().open(fs.get().getFile(desc));
 		} catch (IOException e1) {
-			Alert alert = new Alert(AlertType.ERROR, "File " + desc.getName() + " couldn't be opened!", ButtonType.OK);
-			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-			alert.show();
+			showSimpleModal(AlertType.ERROR, "File " + desc.getName() + " couldn't be opened!", ButtonType.OK);
 		}
 	}
 
@@ -197,10 +188,8 @@ public class ServerPrimaryController extends AbstractFileController {
 			try {
 				FileSystemLoader.save(fs.get(), f);
 			} catch (ResharerException e) {
-				Alert alert = new Alert(AlertType.ERROR, "Could not save the virtual filesystem. " + e.getMessage(),
+				showSimpleModal(AlertType.ERROR, "Could not save the virtual filesystem. " + e.getMessage(),
 						ButtonType.OK);
-				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-				alert.show();
 			}
 		}
 	}
@@ -218,10 +207,8 @@ public class ServerPrimaryController extends AbstractFileController {
 				parentDirs.clear();
 				ls();
 			} catch (ResharerException e) {
-				Alert alert = new Alert(AlertType.ERROR, "Could not load the virtual filesystem. " + e.getMessage(),
+				showSimpleModal(AlertType.ERROR, "Could not load the virtual filesystem. " + e.getMessage(),
 						ButtonType.OK);
-				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-				alert.show();
 			}
 		}
 	}

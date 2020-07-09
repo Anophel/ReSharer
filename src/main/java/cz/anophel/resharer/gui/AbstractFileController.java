@@ -11,19 +11,22 @@ import cz.anophel.resharer.rmi.DirectoryDescriptorView;
 import cz.anophel.resharer.rmi.FileDescriptorView;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 /**
- * Abstract GUI controller for basic handling events
- * and descriptor views.
+ * Abstract GUI controller for basic handling events and descriptor views.
  * 
  * @author Patrik Vesely
  *
@@ -180,12 +183,20 @@ public abstract class AbstractFileController {
 				} else if (desc.getType() == DescriptorTypes.FILE && previousSelectedUid == desc.getUid()) {
 					tryOpenFile((FileDescriptorView) desc);
 					previousSelectedUid = -2;
+				} else {
+					previousSelectedUid = desc.getUid();
 				}
-				previousSelectedUid = desc.getUid();
 			} else {
 				previousSelectedUid = -2;
 			}
 		}
+	}
+
+	Alert showSimpleModal(AlertType type, String message, ButtonType... buttons) {
+		Alert alert = new Alert(type, message, buttons);
+		alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+		alert.showAndWait();
+		return alert;
 	}
 
 	/**
