@@ -48,10 +48,26 @@
 			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
-				<version>0.0.3</version>
-				<configuration>
-					<mainClass>cz.anophel.resharer.gui.App</mainClass>
-				</configuration>
+				<version>0.0.4</version>
+				<executions>
+					<execution>
+						<!-- Default configuration for running -->
+						<id>default-cli</id>
+						<configuration>
+							<mainClass>cz.anophel.resharer.gui.App</mainClass>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- Configuration for debugging -->
+						<id>debug</id>
+						<configuration>
+							<options>
+								<option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8002</option>
+							</options>
+							<mainClass>cz.anophel.resharer.gui.App</mainClass>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

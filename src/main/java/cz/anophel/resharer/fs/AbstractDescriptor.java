@@ -1,8 +1,11 @@
 package cz.anophel.resharer.fs;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public abstract class AbstractDescriptor implements IDescriptor {
+public abstract class AbstractDescriptor implements IDescriptor, Serializable {
+
+	private static final long serialVersionUID = 935520120L;
 
 	private long uid;
 	

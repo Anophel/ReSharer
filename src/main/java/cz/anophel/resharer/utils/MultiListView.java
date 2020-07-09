@@ -1,12 +1,24 @@
 package cz.anophel.resharer.utils;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MultiListView<E> extends AbstractList<E> {
-
+/**
+ * Helper list structure. Creates a simple view over
+ * more lists. It's property depends on passed lists,
+ * because it does not copy any values from the lists.
+ * 
+ * @author Patrik Vesely
+ *
+ * @param <E>
+ */
+public class MultiListView<E> extends AbstractList<E> implements Serializable {
+ 
+	private static final long serialVersionUID = 1L;
+	
 	private final ArrayList<List<? extends E>> lists;
 
 	public MultiListView(List<? extends E> list1, List<? extends E> list2, List<? extends E> list3) {

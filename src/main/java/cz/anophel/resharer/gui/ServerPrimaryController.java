@@ -1,16 +1,19 @@
 package cz.anophel.resharer.gui;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Stack;
+import java.util.Optional;
 
-import cz.anophel.resharer.fs.DescriptorTypes;
-import cz.anophel.resharer.fs.DirectoryDescriptor;
 import cz.anophel.resharer.fs.FileSystem;
+import cz.anophel.resharer.fs.FileSystemLoader;
 import cz.anophel.resharer.fs.IDescriptor;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import cz.anophel.resharer.rmi.DirectoryDescriptorView;
+import cz.anophel.resharer.rmi.FileDescriptorView;
+import cz.anophel.resharer.rmi.ResourceProviderFactory;
+import cz.anophel.resharer.utils.Ref;
+import cz.anophel.resharer.utils.ResharerException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -18,85 +21,64 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
-public class ServerPrimaryController {
+/**
+ * Primary server controller for managing file system and sharing.
+ * 
+ * @author Patrik Vesely
+ *
+ */
+public class ServerPrimaryController extends AbstractFileController {
 
 	@FXML
-	private VBox rootVBox;
+	private Label isSharingLabel;
 
-	@FXML
-	private Label currPathLabel;
-
-	@FXML
-	private TableView<IDescriptor> filesList;
-
-	@FXML
-	private TableColumn<IDescriptor, String> nameColumn;
-
-	@FXML
-	private TableColumn<IDescriptor, String> lastModifColumn;
-
-	@FXML
-	private TableColumn<IDescriptor, Long> uidColumn;
-	
 	/**
 	 * System GUI for selecting files and directories.
 	 */
 	private FileChooser fileChooser;
 	private DirectoryChooser dirChooser;
-	
-	/**
-	 * UID of previous selected item for double click.
-	 */
-	private long previousSelectedUid = -2;
 
 	/**
 	 * Virtual file system for sharing files.
 	 */
-	private FileSystem fs;
+	private Ref<FileSystem> fs;
 
 	/**
-	 * Current working directory.
+	 * Indicator, if current server is sharing.
 	 */
-	private DirectoryDescriptor workingDir;
-
-	/**
-	 * Stack of parent directories.
-	 */
-	private Stack<DirectoryDescriptor> parentDirs;
+	private boolean sharing = false;
 
 	@FXML
 	public void initialize() {
-		// Initialize virtual filesystem
-		fs = new FileSystem();
-		parentDirs = new Stack<>();
-		workingDir = fs.getRoot();
+		super.initialize();
 
-		// Initialize table component
-		nameColumn.setCellValueFactory(desc -> new ReadOnlyObjectWrapper<String>(desc.getValue().getName()));
-		lastModifColumn.setCellValueFactory(desc -> {
-			if (desc.getValue().getUid() == -1)
-				return new ReadOnlyObjectWrapper<String>("");
-			return new ReadOnlyObjectWrapper<String>(
-					DateTimeFormatter.ISO_DATE_TIME.format(desc.getValue().getLastModif()));
-		});
-		uidColumn.setCellValueFactory(desc -> new ReadOnlyObjectWrapper<Long>(desc.getValue().getUid()));
+		// Initialize virtual filesystem
+		fs = new Ref<FileSystem>(new FileSystem());
+		workingDir = fs.get().getRootView();
+
+		// Initialize sharing system
+		try {
+			ResourceProviderFactory.instance().prepareStub(fs);
+		} catch (ResharerException e2) {
+			Alert a = new Alert(AlertType.ERROR, e2.getMessage(), ButtonType.OK);
+			a.show();
+			e2.printStackTrace();
+		}
 
 		// Initialize context menu
 		ContextMenu descContextMenu = new ContextMenu();
-	    MenuItem deleteItem = new MenuItem("Delete");
-	    
-	    deleteItem.setOnAction(e -> removeSelectedDesc());
-	    
-	    descContextMenu.getItems().add(deleteItem);
-	    filesList.setContextMenu(descContextMenu);
-		
+		MenuItem deleteItem = new MenuItem("Delete");
+
+		deleteItem.setOnAction(e -> removeSelectedDesc());
+
+		descContextMenu.getItems().add(deleteItem);
+		filesList.setContextMenu(descContextMenu);
+
 		// Initialize file and directory chooser
 		fileChooser = new FileChooser();
 		fileChooser.setTitle("Add files to virtual file system");
@@ -108,62 +90,71 @@ public class ServerPrimaryController {
 		ls();
 	}
 
+	/**
+	 * Toggles sharing of virtual filesystem.
+	 */
+	@FXML
+	private void toggleSharing() {
+		try {
+			if (!sharing) {
+				ResourceProviderFactory.instance().bindStub();
+			} else {
+				ResourceProviderFactory.instance().unbindStub();
+			}
+			sharing = !sharing;
+			isSharingLabel.setText(Boolean.toString(sharing));
+		} catch (ResharerException e) {
+			Alert a = new Alert(AlertType.ERROR, "Failed to start/stop sharing. " + e.getMessage(), ButtonType.OK);
+			a.show();
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Removes selected descriptors from virtual filesystem.
+	 */
 	private void removeSelectedDesc() {
-		IDescriptor desc = filesList.getSelectionModel().getSelectedItem();
-		
-		if (desc == null || desc.getUid() == -1)
+		var descs = filesList.getSelectionModel().getSelectedItems();
+
+		if (descs == null)
 			return;
-		
-		Alert alert = new Alert(AlertType.CONFIRMATION, 
-				desc.getName() + " is going to be deleted from virtual filesystem, but stays on physical filesystem. Do you want to proceed?", 
-				ButtonType.YES, ButtonType.NO);
-		alert.showAndWait();
+
+		Alert alert;
+		if (descs.size() == 1) {
+			alert = new Alert(AlertType.CONFIRMATION,
+					"File " + descs.get(0).getName() + " is going to be deleted from virtual filesystem,"
+							+ " but stays on physical filesystem. Do you want to proceed?",
+					ButtonType.YES, ButtonType.NO);
+			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+			alert.showAndWait();
+		} else {
+			alert = new Alert(AlertType.CONFIRMATION,
+					descs.size() + " files are going to be deleted from virtual filesystem,"
+							+ " but stay on physical filesystem. Do you want to proceed?",
+					ButtonType.YES, ButtonType.NO);
+			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+			alert.showAndWait();
+		}
 
 		if (alert.getResult() == ButtonType.YES) {
-		    fs.removeDescriptor(workingDir, desc);
+			for (var desc : descs)
+				fs.get().removeDescriptor(workingDir, desc);
 		}
-		
-		ls();
-	}
-	
-	/**
-	 * List files in current directory.
-	 */
-	private void ls() {
-		filesList.getItems().clear();
-		if (parentDirs.size() > 0)
-			filesList.getItems().add(new DirectoryDescriptor(-1, ".."));
 
-		for (var desc : workingDir.ls())
-			filesList.getItems().add(desc);
-		
-		currPathLabel.setText(parentDirs.stream().map(e -> e.getName()).reduce("/", (acc, obj) -> acc + obj + "/") + workingDir.getName() + "/");
-	}
-
-	/**
-	 * Change current working directory.
-	 * 
-	 * @param newDir
-	 */
-	private void cd(DirectoryDescriptor newDir) {
-		if (newDir.getUid() == -1) {
-			workingDir = parentDirs.pop();
-		} else {
-			parentDirs.push(workingDir);
-			workingDir = newDir;
-		}
-		
 		ls();
 	}
 
-	@FXML
-	private void descSelected(MouseEvent e) {
-		if (e.isPrimaryButtonDown()) {
-			IDescriptor desc = filesList.getSelectionModel().getSelectedItem();
-			if (desc.getType() == DescriptorTypes.DIRECTORY && previousSelectedUid == desc.getUid()) {
-				cd((DirectoryDescriptor) desc);
-			}
-			previousSelectedUid = desc.getUid();
+	/**
+	 * Opens a file directly with associated program.
+	 */
+	@Override
+	void tryOpenFile(FileDescriptorView desc) {
+		try {
+			Desktop.getDesktop().open(fs.get().getFile(desc));
+		} catch (IOException e1) {
+			Alert alert = new Alert(AlertType.ERROR, "File " + desc.getName() + " couldn't be opened!", ButtonType.OK);
+			alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+			alert.show();
 		}
 	}
 
@@ -177,7 +168,7 @@ public class ServerPrimaryController {
 		List<File> list = fileChooser.showOpenMultipleDialog(rootVBox.getScene().getWindow());
 		if (list != null) {
 			for (var f : list)
-				fs.addDescriptor(workingDir, f, 0);
+				fs.get().addDescriptor(workingDir, f, 0);
 		}
 		ls();
 	}
@@ -191,14 +182,74 @@ public class ServerPrimaryController {
 	private void addDir() throws IOException {
 		File f = dirChooser.showDialog(rootVBox.getScene().getWindow());
 		if (f != null) {
-			fs.addDescriptor(workingDir, f, 10);
+			fs.get().addDescriptor(workingDir, f, 10);
 		}
 		ls();
 	}
 
+	/**
+	 * Saves virtual file system to a file.
+	 */
 	@FXML
-	private void goBack() throws IOException {
-		App.setRoot("primary");
+	private void saveFileSystem() {
+		File f = fileChooser.showSaveDialog(rootVBox.getScene().getWindow());
+		if (f != null) {
+			try {
+				FileSystemLoader.save(fs.get(), f);
+			} catch (ResharerException e) {
+				Alert alert = new Alert(AlertType.ERROR, "Could not save the virtual filesystem. " + e.getMessage(),
+						ButtonType.OK);
+				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+				alert.show();
+			}
+		}
+	}
+
+	/**
+	 * Loads virtual file system from a file.
+	 */
+	@FXML
+	private void loadFileSystem() {
+		File f = fileChooser.showOpenDialog(rootVBox.getScene().getWindow());
+		if (f != null) {
+			try {
+				fs.set(FileSystemLoader.load(f));
+				workingDir = fs.get().getRootView();
+				parentDirs.clear();
+				ls();
+			} catch (ResharerException e) {
+				Alert alert = new Alert(AlertType.ERROR, "Could not load the virtual filesystem. " + e.getMessage(),
+						ButtonType.OK);
+				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+				alert.show();
+			}
+		}
+	}
+
+	/**
+	 * Creates virtual directory in virtual file system.
+	 */
+	@FXML
+	private void createVirtDir() {
+		TextInputDialog dialog = new TextInputDialog("New directory");
+		dialog.setTitle("Create virtual directory");
+		dialog.setHeaderText("Insert name of new virtual directory");
+		dialog.setContentText("Name:");
+
+		// Traditional way to get the response value.
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent()) {
+			fs.get().addVirtualDir(workingDir, result.get());
+			ls();
+		}
+	}
+
+	/**
+	 * Lists descriptors in directory desc from virtual file system.
+	 */
+	@Override
+	List<IDescriptor> ls(DirectoryDescriptorView desc) {
+		return fs.get().ls(desc);
 	}
 
 }

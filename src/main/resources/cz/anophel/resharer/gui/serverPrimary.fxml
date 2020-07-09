@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox fx:id="rootVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="874.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.anophel.resharer.gui.ServerPrimaryController">
+<VBox fx:id="rootVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="772.0" prefWidth="1241.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.anophel.resharer.gui.ServerPrimaryController">
    <children>
-      <HBox alignment="BOTTOM_LEFT" prefHeight="63.0" prefWidth="874.0">
+      <HBox alignment="BOTTOM_LEFT" prefHeight="63.0" prefWidth="874.0" spacing="50.0">
          <children>
-            <Label fx:id="currPathLabel" lineSpacing="20.0" text="Label" />
+            <Label text="Sharing:" />
+            <Label fx:id="isSharingLabel" text="false" />
+            <Label text="Path:" />
+            <Label fx:id="currPathLabel" lineSpacing="20.0" text="currPath" />
          </children>
       </HBox>
-      <TableView fx:id="filesList" prefHeight="485.0" prefWidth="874.0">
+      <TableView fx:id="filesList" onMouseClicked="#descSelected" prefHeight="605.0" prefWidth="1241.0">
         <columns>
-          <TableColumn fx:id="nameColumn" prefWidth="297.0" text="Name" />
-          <TableColumn fx:id="lastModifColumn" prefWidth="313.0" text="Last modification" />
-            <TableColumn fx:id="uidColumn" prefWidth="263.0" text="UID" />
+            <TableColumn fx:id="typeColumn" prefWidth="63.0" />
+          <TableColumn fx:id="nameColumn" prefWidth="456.0" text="Name" />
+          <TableColumn fx:id="lastModifColumn" prefWidth="277.0" text="Last modification" />
+            <TableColumn fx:id="uidColumn" prefWidth="246.0" text="UID" />
+            <TableColumn fx:id="statusColumn" prefWidth="165.0" text="Status" />
         </columns>
       </TableView>
       <HBox alignment="CENTER" prefHeight="103.0" prefWidth="744.0" spacing="20.0">
          <children>
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#goBack" text="Back" />
             <Button fx:id="addFileButton" mnemonicParsing="false" onAction="#addFile" text="Add files" />
             <Button fx:id="addDirButton" mnemonicParsing="false" onAction="#addDir" text="Add directories" />
+            <Button fx:id="createVirtDirButton" mnemonicParsing="false" onAction="#createVirtDir" text="Create virutal directory" />
+            <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#ls" text="Refresh" />
+            <Button fx:id="toggleSharingButton" mnemonicParsing="false" onAction="#toggleSharing" text="Toggle sharing" />
+            <Button fx:id="saveVFSButton" mnemonicParsing="false" onAction="#saveFileSystem" text="Save VFS" />
+            <Button fx:id="loadVFSButton" mnemonicParsing="false" onAction="#loadFileSystem" text="Load VFS" />
          </children>
       </HBox>
    </children>
